@@ -1,3 +1,6 @@
+from api.client.config import API_TOKEN
+
+
 class ImeiValidator:
     """
     Класс для валидации IMEI.
@@ -12,3 +15,12 @@ class ImeiValidator:
         :return: True, если строка является корректным IMEI, иначе False.
         """
         return len(device_id) == 15 and device_id.isdigit()
+
+    @staticmethod
+    def validate_secret_key(key):
+        """
+        Проверяю ключь на соответствие
+        :param key: ключь передаваемый клиентским кодом
+        :return: True, если строка является корректным APIREY, иначе False.
+        """
+        return key == API_TOKEN

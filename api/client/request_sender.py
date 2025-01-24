@@ -27,7 +27,15 @@ class ImeiRequestSender:
         :return: Ответ от API в виде словаря.
         :raises HTTPException: Если произошла ошибка при запросе к API.
         """
-        async with httpx.AsyncClient() as client:
+        # Настройка таймаутов
+        timeout = httpx.Timeout(
+            connect=10.0,
+            read=10.0,
+            write=10.0,
+            pool=10.0
+        )
+
+        async with httpx.AsyncClient(timeout=timeout) as client:
             try:
                 response = await client.post(url, headers=headers, json=body)
 
@@ -37,6 +45,8 @@ class ImeiRequestSender:
                         detail=f"Ошибка при запросе к API. Статус: {response.status_code}, Ответ: {response.text}"
                     )
                 return response.json()
+            except httpx.TimeoutException as e:
+                raise HTTPException(status_code=504, detail=f"Таймаут при запросе к API: {str(e)}")
             except httpx.HTTPStatusError as e:
                 raise HTTPException(status_code=500, detail=f"Ошибка при запросе к API: {str(e)}")
             except httpx.RequestError as e:
